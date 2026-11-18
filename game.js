@@ -734,8 +734,8 @@ function getPathDistance(startX, startY, targetX, targetY) {
             const ny = current.y + dy;
             const key = nx + "," + ny;
 
-            if (maze[ny] && !visited.has(key) && (
-                    maze[ny][nx] === 0 || maze[ny][nx] === 3 || maze[ny][nx] === 4 || (
+            if (maze[ny] && maze [ny][nx] !== undefined && !visited.has(key) && (
+                    maze[ny][nx] === 0 || maze[ny][nx] === 3 || maze[ny][nx] === 4 || maze[ny][nx] === 2 || (
                       nx === targetX && ny === targetY  
                     )
                 )
@@ -774,13 +774,17 @@ function getNextMonsterStep(startX, startY, targetX, targetY) {
     return null;
 }
 
-function teleportMonster(x, y) {
+function teleportMonster(x, y, reservedPositions = new Set()) {
     let possibleSpawns = [];
     let farthestDistance = -1;
 
     for (let row = 1; row < maze.length - 1; row++) {
         for (let col = 1; col < maze[row].length - 1; col++) {
             if (maze[row][col] !==0) continue;
+
+            const key = col + "," + row;
+
+            if (reservedPositions.has(key)) continue;
 
             const distance = getTeleportDistance(col, row, player.x, player.y);
 
@@ -802,6 +806,7 @@ function teleportMonster(x, y) {
 
     maze[y][x] = 0;
     maze[spawn.y][spawn.x] = 4;
+    reservedPositions.add(spawn.x + "," + spawn.y);
 
     return true;
 }
@@ -854,7 +859,13 @@ function moveMonsters() {
     }
 
     const dirs = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+
+    const reservedPositions = new Set (monsters.map(m => m.x + "," + m.y));
+
     for (let m of monsters) {
+        
+        if (maze[m.y][m.x] !==4) continue;
+        
         const dist = getPathDistance(m.x, m.y, player.x, player.y);
         let move = dist <= 4 ? getNextMonsterStep(m.x, m.y, player.x, player.y) : null;
         if (!move) move = dirs[Math.floor(Math.random() * dirs.length)];
@@ -867,12 +878,27 @@ function moveMonsters() {
             const hit = takeDamage(25, "A hunting monster ambushed you!");
 
             if (hit) {
-                teleportMonster(m.x, m.y);
+                teleportMonster(m.x, m.y, reservedPositions);
             }
+            if (gameOver) return;
+            continue;
         }
-        else if (maze[ny] && (maze[ny][nx] === 0 || maze[ny][nx] === 3)) {
+        if (!maze[ny] || maze[ny][nx] === undefined) {
+            continue;
+        }
+        const destinationKey = nx + "," + ny;
+
+        if (reservedPositions.has(destinationKey)) {
+            continue;
+        }
+
+        if (maze[ny][nx] === 0 || maze[ny][nx] === 3) {
+
             maze[m.y][m.x] = 0;
             maze[ny][nx] = 4;
+
+            reservedPositions.add(destinationKey);
+
             if (dist <=4) playBeep(260, Math.sign(nx - player.x), 'sawtooth', 0.12);
         }
     }
