@@ -22,7 +22,7 @@ How to play:
 Use the sonar to scan for walls, exit, monsters, traps and take steps moving through the maze following these indicators. Use powerups to help you on difficult levels.
 
 Link:
-https://siddharthmalhotrasinghamitisforlife.github.io/echoes-in-the-dark/
+[https://siddharthmalhotrasinghamitisforlife.github.io/echoes-in-the-dark/](https://siddharthmalhotrasinghamitisforlife.github.io/echoes-in-the-dark/)
 
 Future plans:
 I plan to increase number of levels and add new features when i have time, even if just a little each day like 
