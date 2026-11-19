@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echoes in the Dark</title>
+    <style>
+        body {
+            background-color: #0d0f14;
+            color: #e6edf3;
+            font-family: 'Segoe UI', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items : center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 580px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+        h1 {
+            margin-top: 0;
+            color: #58a6ff;
+            letter-spacing: 1px;
+        }
+        h2, h3 {
+            margin-top: 0;
+        }
+        .legend {
+            background-color: #0d1117;
+            border: 1px solid #21262d;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: left;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+        button {
+            background-color: #238636;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #2ea043;
+        }
+        button.secondary {
+            background-color: #1f6feb;
+        }
+        button.secondary:hover {
+            background-color: #388bfd;
+        }
+        button.danger {
+            background-color: #da3633;
+        }
+        button.danger:hover {
+            background-color: #f85149;
+        }
+        button.shop-btn {
+            background-color: #8957e5;
+            font-size: 0.85rem;
+            padding: 8px 14px;
+        }
+        button.shop-btn:hover {
+            background-color: #a371f7;
+        }
+        .bar-group {
+            margin: 12px 0;
+            text-align: left;
+        }
+        .bar-label {
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            color: #8b949e;
+        }
+        .bar-bg {
+            width: 100%;
+            height: 16px;
+            background-color: #21262d;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        #healthBar {
+            width: 100%;
+            height: 100%;
+            background-color: #f85149;
+            transition: width 0.2s;
+        }
+        #armourBar {
+            width: 0%;
+            height: 100%;
+            background-color: #58a6ff;
+            transition: width 0.2s;
+        }
+        #statsText {
+            background-color: #0d1117;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin: 15px 0;
+            border: 1px solid #30363d;
+        }
+        #message {
+            min-height: 48px;
+            background-color: #0d1117;
+            border-left: 4px solid #58a6ff;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #shopPanel {
+            background-color: #0d1117;
+            border: 1px solid #8957e5;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        #shopPanel h3 {
+            color: #d2a8ff;
+            margin-bottom: 10px;
+        }
+        .hidden {
+            display: none !important;
+        }
+        #resetProgressBtn {
+        background: #8b2020;
+        color: white;
+        border: 1px solid #ff5555;
+        cursor: pointer;
+        }
+
+        #resetProgressBtn:hover {
+        background: #b52b2b;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+    <div id="homeScreen">
+        <h1>ECHOES IN THE DARK</h1>
+        <p>Navigate blind mazes using stereo sonar pings. Wear headphones for left/right audio!</p>
+
+        <div class="legend">
+            <strong>Controls:</strong><br>
+            • <b>W A S D</b>: Send sonar ping (Up/Left/Down/Right)<br>
+            • <b>Arrow Keys</b>: Walk 1 step<br>
+            • <b>H</b>: Use Medkit (+30 HP) | <b>E</b>: Equip Armour (+20%)<br>
+            • <b>T + WASD</b>: Blast an inner wall, trap, or monster with TNT<br><br>
+            <strong>Sonar Sounds:</strong><br>
+            • <b>Pure Tone</b>: Wall (Higher pitch = farther away)<br>
+            • <b>High Ping (950Hz)</b>: Exit<br>
+            • <b>Double Beep</b>: Spike Trap (-15 HP)<br>
+            • <b>Low Growl</b>: Monster (Moves after your steps, -25 HP)<br>
+            • <b>High-Pitched Growl</b>: Monster heard you and is hunting you!
+        </div>
+
+        <button id="startCampaignBtn">Start Campaign (Levels 1-10)</button>
+        <button id="startEndlessBtn" class="secondary">Endless Random Mode</button>
+        <button id="resetProgressBtn" type="button">
+            Reset All Progress
+        </button>
+    </div>
+
+    <div id="gameScreen" class="hidden">
+        <h2 id="levelTitle">Level 1</h2>
+
+        <div class="bar-group">
+            <div class="bar-label">Health</div>
+            <div class="bar-bg"><div id="healthBar"></div></div>
+        </div>
+
+        <div class="bar-group">
+            <div class="bar-label">Armour</div>
+            <div class="bar-bg"><div id="armourBar"></div></div>
+        </div>
+
+        <div id="statsText">Coins: 0 | Armour Plates: 0 | TNT: 0 | Medkits: 0 | Luck: 10%</div>
+
+        <div id="message">Press WASD to scan, Arrows to walk.</div>
+
+        <div id="shopPanel" class="hidden">
+            <h3>Merchant Shop</h3>
+            <button id="buyMedkitBtn" class="shop-btn">Buy Medkit (25 Coins)</button>
+            <button id="buyArmourBtn" class="shop-btn">Buy Armour Plate (50 Coins)</button>
+            <button id="buyTntBtn" class="shop-btn">Buy TNT (100 Coins)</button>
+            <button id="buyLuckBtn" class="shop-btn">+5% Luck (200 Coins)</button>
+        </div>
+
+        <div id="actionButtons">
+            <button id="beepBtn" class="secondary">Test Sound</button>
+            <button id="nextLevelBtn" class="hidden">Next Level</button>
+            <button id="endlessUnlockBtn" class="secondary hidden">Enter Endless Mode</button>
+            <button id="homeBtn" class="danger">Homepage</button>
+        </div>
+    </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
